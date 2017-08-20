@@ -30,8 +30,8 @@ A.J. Green|WR|CIN|172.44|195.4|151|59.12|44.40
 
 Heres a sample of the mock draft:
 
-|Team  1|
-|--------|-------------|------------|
+|Team  1 |             |             |
+|--------|-------------|-------------|
 |01RB:   |David Johnson       |283.32|
 |13RB:   |Todd Gurley         |184.69|
 |25FLEX: |Isaiah Crowell      |158.82|
