@@ -5,7 +5,9 @@ I rip the numbers from fantasypros, and calculate based on custom settings.
 Just added the mock draft feature. 
 
 The cheat sheet produced looks like this:
+
 NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)|VALUE|VARIANCE
+----|--------|----|----------|-----------|----------|-----|--------
 David Johnson|RB|ARI|283.32|311.61|259.6|170.46|52.01
 Le'Veon Bell|RB|PIT|262.44|289.55|225.5|149.58|64.05
 LeSean McCoy|RB|BUF|219.92|243.84|191.2|107.06|52.64

@@ -63,9 +63,9 @@ my %positions = (
 );
 
 my %keeper_hash;
-#if($keepers){
-#  %keeper_hash = map{s/(^\s+|\s+$)//; $_ => 0} @{readf($keepers)};   
-#}
+if($keepers){
+  %keeper_hash = map{s/(^\s+|\s+$)//; $_ => 0} @{readf($keepers)};   
+}
 
 #Big hash contains everything, Calculated has is the finished product, inverse for flex
 my(%big_hash, %calculated_hash, %inverse_hash); 
