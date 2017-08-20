@@ -1,149 +1,18 @@
 #!/usr/bin/env perl
-package Player;
-use Mouse; 
-
-has 'name'     => (is => 'ro', isa => 'Str');
-has 'team'     => (is => 'ro', isa => 'Str');
-has 'position' => (is => 'ro', isa => 'Str');
-has 'values'   => (is => 'ro', isa => 'ArrayRef[Num]', default => sub {[]}); 
-has 'fpts'     => (is => 'rw', isa => 'Num', default => 0); 
-has 'value'  => (is => 'rw', isa => 'Num', default => 0); 
-
-sub push_val{ 
-  my($self, $val) = @_;
-  push(@{$self->values}, $val);  
-}
-
-sub to_csv{ 
-  my($self, $printv) = @_;
-  my $string = ($printv) ? 
-    join('|', $self->name, $self->position, $self->team, $self->fpts, $self->value) :
-    join('|', $self->name, $self->position, $self->team, $self->fpts); 
-  return($string);  
-} 
-
-sub debug{
-  my $self = shift; 
-  my $string = join('|', $self->name, $self->position, $self->team, @{$self->values});
-  return($string); 
-}
-
-__PACKAGE__->meta->make_immutable();
-
-package QB; 
-use Mouse; 
-
-extends 'Player';
-
-has 'passing_yds' => (is => 'rw', isa => 'Num');
-has 'passing_tds' => (is => 'rw', isa => 'Num');
-has 'ints'        => (is => 'rw', isa => 'Num');
-has 'rushing_yds' => (is => 'rw', isa => 'Num');
-has 'rushing_tds'  => (is => 'rw', isa => 'Num');
-has 'fumbles'      => (is => 'rw', isa => 'Num');
-
-sub calculate{
-  my ($self, $scoring_ref) = @_;
-  my %scoring = %{$scoring_ref}; 
-  my @vals = @{$self->values};
-  (scalar(@vals) == 10) || die "Quarterback does not have enough values"; 
-  
-  #Load em up and calculate
-  $self->passing_yds($vals[2]);
-  $self->passing_tds($vals[3]); 
-  $self->ints($vals[4]); 
-  $self->rushing_yds($vals[6]);
-  $self->rushing_tds($vals[7]); 
-  $self->fumbles($vals[8]);
-  my $calc = (
-    ($self->passing_yds / $scoring{'passing_yds'}) +
-    ($self->passing_tds * $scoring{'passing_tds'}) + 
-    ($self->ints *  $scoring{'ints'})              + 
-    ($self->rushing_yds / $scoring{'rushing_yds'}) + 
-    ($self->rushing_tds * $scoring{'rushing_tds'}) + 
-    ($self->fumbles * $scoring{'fumbles'})
-  );
-  $self->fpts($calc); 
-}
-
-__PACKAGE__->meta->make_immutable();
-
-package RBWR;
-use Mouse;
-
-extends 'Player'; 
-
-has 'rushing_yds'   => (is => 'rw', isa => 'Num');
-has 'rushing_tds'   => (is => 'rw', isa => 'Num');
-has 'receptions'    => (is => 'rw', isa => 'Num'); 
-has 'receiving_yds' => (is => 'rw', isa => 'Num');
-has 'receiving_tds'  => (is => 'rw', isa => 'Num');
-has 'fumbles'       => (is => 'rw', isa => 'Num');
-
-sub calculate{
-  my ($self, $scoring_ref) = @_;
-  my %scoring = %{$scoring_ref}; 
-  my @vals = @{$self->values};
-  (scalar(@vals) == 8) || die "RB/WR does not have enough values"; 
-  
-  #Load em up and calculate
-  $self->rushing_yds($vals[1]);
-  $self->rushing_tds($vals[2]);  
-  $self->receptions($vals[3]);  
-  $self->receiving_yds($vals[4]);
-  $self->receiving_tds($vals[5]); 
-  $self->fumbles($vals[6]);
-  my $calc = (
-    ($self->rushing_yds / $scoring{'rushing_yds'}) + 
-    ($self->rushing_tds * $scoring{'rushing_tds'}) + 
-    ($self->receptions  * $scoring{'receptions'})  + 
-    ($self->receiving_yds / $scoring{'receiving_yds'}) + 
-    ($self->receiving_tds * $scoring{'receiving_tds'}) + 
-    ($self->fumbles * $scoring{'fumbles'})
-  );
-  $self->fpts($calc); 
-}
-
-__PACKAGE__->meta->make_immutable();
-
-package TE;
-use Mouse;  
-
-extends 'Player';
-
-has 'receptions'    => (is => 'rw', isa => 'Num'); 
-has 'receiving_yds' => (is => 'rw', isa => 'Num');
-has 'receiving_tds'  => (is => 'rw', isa => 'Num');
-has 'fumbles'       => (is => 'rw', isa => 'Num');
-
-sub calculate{
-  my ($self, $scoring_ref) = @_;
-  my %scoring = %{$scoring_ref}; 
-  my @vals = @{$self->values};
-  (scalar(@vals) == 5) || die "TE does not have enough values"; 
-  
-  #Load em up and calculate
-  $self->receptions($vals[0]);  
-  $self->receiving_yds($vals[1]);
-  $self->receiving_tds($vals[2]); 
-  $self->fumbles($vals[3]);
-  my $calc = (
-    ($self->receptions  * $scoring{'receptions'})  + 
-    ($self->receiving_yds / $scoring{'receiving_yds'}) + 
-    ($self->receiving_tds * $scoring{'receiving_tds'}) + 
-    ($self->fumbles * $scoring{'fumbles'})
-  );
-  $self->fpts($calc); 
-}
-
-__PACKAGE__->meta->make_immutable();
-
 package Main;
 use strict;
 use warnings;
+use Cwd 'abs_path';
 use LWP::UserAgent;
 use Getopt::Long;
 use File::Basename; 
+use lib './lib';
+use QB;
+use RBWR; 
+use TE;
+use Team;
+use Stat;
+use Data::UUID;
 use open qw(:std :utf8);
 
 $_ = '' for(my $reset, my $keepers, my $debug); 
@@ -160,8 +29,14 @@ $_ = '' for(my $reset, my $keepers, my $debug);
 
 #Some constants
 my @pages =('qb', 'rb', 'wr', 'te'); 
-my $input_dir = './input';
-my $output_dir = './output'; 
+my $script_dir = dirname(abs_path($0));
+my $input_dir = join('/', $script_dir, 'input');
+my $output_dir = join('/', $script_dir, 'output');
+my $ug = Data::UUID->new();
+
+foreach($input_dir, $output_dir){
+  (-d $_) || mkdir($_);
+}
 
 #Fantasy Settings
 my $num_teams = 12;
@@ -169,64 +44,115 @@ my $num_teams = 12;
 my %scoring = (
   'passing_yds'   => 25,
   'passing_tds'   => 4, 
-  'ints'          => -1,
+  'ints'          => -2,
   'rushing_yds'   => 10, 
   'rushing_tds'   => 6,
-  'receptions'    => .5,
+  'receptions'    => 0,
   'receiving_yds' => 10,
   'receiving_tds' => 6,
   'fumbles'       => -2
 ); 
 
 my %positions = (
-  'qb' => 1,
-  'wr' => 3,
-  'rb' => 2,
-  'te' => 1,
-  'flex' => 2
+  'qb'    => 1,
+  'wr'    => 3,
+  'rb'    => 2,
+  'te'    => 1,
+  'flex'  => 1, 
+  'bench' => 5
 );
 
 my %keeper_hash;
-if($keepers){
-  %keeper_hash = map{s/(^\s+|\s+$)//; $_ => 0} @{readf($keepers)};   
-}
+#if($keepers){
+#  %keeper_hash = map{s/(^\s+|\s+$)//; $_ => 0} @{readf($keepers)};   
+#}
 
+#Big hash contains everything, Calculated has is the finished product, inverse for flex
 my(%big_hash, %calculated_hash, %inverse_hash); 
 foreach(@pages){
   create_input($_, $reset);
   my @lines = @{readf(join('/', $input_dir, $_ . '.html'))}; 
   $big_hash{$_} = munge_data(\@lines, uc($_));
+
   $calculated_hash{$_} = grab_chunks($big_hash{$_}, $num_teams * $positions{$_}, 0);    
   $inverse_hash{$_} = grab_chunks($big_hash{$_}, $num_teams * $positions{$_}, 1);
 }
 
-
+#Grab the flex spots that won't be drafted, index them for the mock draft, add top spots to calculated
 my @all_inverse = (@{$inverse_hash{'rb'}}, @{$inverse_hash{'wr'}},  @{$inverse_hash{'te'}});
+my %all_remain = map{${$all_inverse[$_]}->uuid => $all_inverse[$_]}(0..$#all_inverse);
 add_flex(\@all_inverse, $num_teams * $positions{'flex'});  
 
+#Calculate our value, and remove the flex players from the remaining
 foreach(keys %calculated_hash){
   $calculated_hash{$_} = calculate_value($calculated_hash{$_}); 
+  foreach(@{$calculated_hash{$_}}){
+    (exists($all_remain{${$_}->uuid})) && delete($all_remain{${$_}->uuid});
+  }
 }
 
-#Store these
-my %temp_hash = %keeper_hash; 
-my %temp_hash2 = %keeper_hash; 
+#Copy the keeper hash, we modify it due to argument order pass by ref
+($_ = %keeper_hash)for(my %temp_hash, my %temp_hash2);
 
-#Dump the value
+#Dump the value list
 my @all_together = (@{$calculated_hash{'qb'}}, @{$calculated_hash{'rb'}}, @{$calculated_hash{'wr'}},  @{$calculated_hash{'te'}});
 @all_together = reverse sort{${$a}->value <=> ${$b}->value} @all_together;   
 @all_together = @{filter(\@all_together, \%temp_hash, 1)};
 dumpf('value', \@all_together, 1); 
 
-#Dump everything else
+#Dump the global rankings else
 my @all_positions = (@{$big_hash{'rb'}}, @{$big_hash{'wr'}},  @{$big_hash{'te'}});
-@all_positions = reverse sort{${$a}->fpts <=> ${$b}->fpts} @all_positions;   
+@all_positions = reverse sort{${$a}->fpts->avg <=> ${$b}->fpts->avg} @all_positions;   
 @all_positions = @{filter(\@all_positions, \%temp_hash2, 0)};
 dumpf('all', \@all_positions, 0); 
+
+#Perform the mock draft
+calc_draft(\@all_together, \%all_remain); 
 
 exit(0);
 
 #################################
+
+sub calc_draft{ 
+  my($draft_ref, $remain_ref) = @_; 
+  my @list = @{$draft_ref};
+  my %remain = %{$remain_ref};
+
+  #Create list of teams, with new inventory
+  my %team_hash = (); 
+  for(1..$num_teams){ 
+    my %new_pos = %positions;
+    $team_hash{$_}  = 'Team'->new(inventory => \%new_pos, number => $_);
+  }
+  
+  #Prepared draft order
+  my %draft_players = map{$_ => $list[$_]}(0..$#list);
+
+  #Remaining sorted by fpts
+  my @remain_list = reverse sort{${$a}->fpts->avg <=> ${$b}->fpts->avg} values(%remain);
+  my %remain_players = map{$_ => $remain_list[$_]} (0..$#remain_list);
+
+  my $team_no = 1;
+  my($ref1, $ref2); 
+  for(my $i = 0; $i < scalar(@list); $i++){ 
+    ($ref1, $ref2) = $team_hash{$team_no}->draft(\%draft_players, \%remain_players, $i+1);
+    %draft_players = %{$ref1};
+    %remain_players = %{$ref2};
+
+    if(++$team_no == $num_teams+1){ 
+      $team_no = 1;
+    }
+  } 
+
+  my @keys = reverse sort{$team_hash{$a}->total <=> $team_hash{$b}->total} keys %team_hash;
+  print("dumping draft.txt\n");
+  my $file = join('/', $output_dir, 'draft.txt');
+  open(my $fh, '>', $file) || die("ERROR: unable to open $file for writing");
+  foreach(@keys){ 
+    print($fh $team_hash{$_}->to_str, "\n"); 
+  }
+  close($fh);
+}
 
 sub filter{
   my($player_ref, $keeper_ref, $validate) = @_; 
@@ -253,19 +179,20 @@ sub filter{
 
 sub add_flex{ 
   my($ref, $count) = @_; 
-  my @arr = @{$ref};     
-  @arr = reverse sort{${$a}->fpts <=> ${$b}->fpts} @arr;   
+  my @arr = @{$ref};
+  @arr = reverse sort{${$a}->fpts->avg <=> ${$b}->fpts->avg} @arr;   
   @arr = @arr[0..$count-1];
   foreach(@arr){
     my $key = lc(${$_}->position());
     push(@{$calculated_hash{$key}}, $_);
   }     
-} 
+}
+
 
 sub grab_chunks{
   my($ref, $num, $inv) = @_; 
   my @arr = @{$ref};   
-  @arr = reverse sort{${$a}->fpts <=> ${$b}->fpts} @arr;   
+  @arr = reverse sort{${$a}->fpts->avg <=> ${$b}->fpts->avg} @arr;   
   @arr = ($inv) ? @arr[$num..$#arr] : @arr[0..$num-1];
   return(\@arr);         
 }
@@ -276,7 +203,7 @@ sub dumpf{
   my $outfile = join('/', $output_dir, $position . '.csv');
   print('dumping ' , $position . '.csv', "\n");  
   open(my $fh, '>', $outfile) || die("Unable to write $outfile"); 
-  ($printv) ? print($fh 'NAME|POSITION|TEAM|FPTS|VALUE', "\n") : print($fh 'NAME|POSITION|TEAM|FPTS', "\n"); 
+  ($printv) ? print($fh 'NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)|VALUE|VARIANCE', "\n") : print($fh 'NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)', "\n"); 
   foreach(@arr){
     print($fh ${$_}->to_csv($printv), "\n"); 
   }  
@@ -286,9 +213,9 @@ sub dumpf{
 sub calculate_value{ 
   my $ref = shift; 
   my @arr = @{$ref};
-  @arr = reverse sort{${$a}->fpts <=> ${$b}->fpts} @arr;   
+  @arr = reverse sort{${$a}->fpts->avg <=> ${$b}->fpts->avg} @arr;   
   for(my $i = 0; $i < scalar(@arr); $i++){
-    my $value = sprintf("%.2f", (${$arr[$i]}->fpts - ${$arr[-1]}->fpts)); 
+    my $value = sprintf("%.2f", (${$arr[$i]}->fpts->avg - ${$arr[-1]}->fpts->avg)); 
     ${$arr[$i]}->value($value);  
   } 
   return(\@arr); 
@@ -315,15 +242,17 @@ sub munge_data{
       $player = $objname->new(
 	'name' => $name, 
 	'team' => $team,
-        'position' => $position
+        'position' => $position,
+        'uuid' => $ug->create()
       ); 
       $trigger = 1;
       next; 
     }
+
     #Reached the end of a player
     if($trigger && $_ eq '</tr>'){
       $player->calculate(\%scoring);
-      (print($player->debug, "\n"))if($debug);
+      ($debug) && print($player->to_str, "\n");
       my $x = $player;
       push(@return, \$x);
       $trigger = 0;
@@ -332,9 +261,15 @@ sub munge_data{
     #Grabbing values
     if($trigger){
       my $value = $current; 
-      $value =~ s/^.+>([^<]+)<.+$/$1/;
-      $value =~ s/,//g;
-      $player->push_val($value); 
+      my @matches = $value =~ />([^<]+)</g;
+      @matches = map{s/,//g; $_} @matches;
+      (scalar(@matches) == 3) || die("Couldnt get whole line for player");
+      my $stat = 'Stat'->new(
+        'avg'  => $matches[0],
+        'high' => $matches[1], 
+        'low'  => $matches[2]
+      );
+      $player->push_stat($stat); 
     }
   } 
   return(\@return); 
@@ -363,8 +298,8 @@ sub create_input{
 sub get_data{ 
   my $position = shift; 
   my $site = 'https://www.fantasypros.com/nfl/projections/';
-  my $complete = join('', $site, $position, '.php', '?week=draft'); 
-  my $ua = LWP::UserAgent->new( ssl_opts => { verify_hostname => 0 });
+  my $complete = join('', $site, $position, '.php', '?week=draft&max-yes=true&min-yes=true'); 
+  my $ua = LWP::UserAgent->new(ssl_opts => { verify_hostname => 0 });
   my $response = $ua->get($complete);
   ($response->is_success) ? return($response->decoded_content) : die $response->status_line; 
 }
