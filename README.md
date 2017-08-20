@@ -29,6 +29,7 @@ Tom Brady|QB|NE|323.626|349.34|304.76|59.36|44.58
 A.J. Green|WR|CIN|172.44|195.4|151|59.12|44.40
 
 Heres a sample of the mock draft:
+
 |Team  1|
 |--------|-------------|------------|
 |01RB:   |David Johnson       |283.32|
@@ -39,8 +40,8 @@ Heres a sample of the mock draft:
 |61WR:   |Demaryius Thomas    |131.54|
 |73WR:   |Emmanuel Sanders    |125.51|
 |85QB:   | Kirk Cousins       |269.40|
-|Total   | 1418.36|
-|Variance|373.51|
+|Total   |                    |1418.36|
+|Variance|                    |373.51|
 
 Team  2
 02RB:   Le'Veon Bell        262.44
