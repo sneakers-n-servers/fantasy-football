@@ -1,8 +1,8 @@
 # fantasy-football
-Perl scripts to run value based drafting algorithim.
-Compare all players QB, RB, WR, TE on an adjusted scale in order to produce an accurate draft list
-I rip the numbers from fantasypros, and calculate based on custom settings.
-Just added the mock draft feature. 
+*Perl scripts to run value based drafting algorithim.
+*Compare all players QB, RB, WR, TE on an adjusted scale in order to produce an accurate draft list, based on settings in the main script
+*I rip the numbers from [fantasypros](https://www.fantasypros.com/nfl/projections/qb.php?week=draft).
+*Just added the mock draft feature. 
 
 The cheat sheet produced looks like this:
 
@@ -29,17 +29,18 @@ Tom Brady|QB|NE|323.626|349.34|304.76|59.36|44.58
 A.J. Green|WR|CIN|172.44|195.4|151|59.12|44.40
 
 Heres a sample of the mock draft:
-Team  1
-01RB:   David Johnson       283.32
-13RB:   Todd Gurley         184.69
-25FLEX: Isaiah Crowell      158.82
-37WR:   Allen Robinson      144.53
-49TE:   Jordan Reed         120.55
-61WR:   Demaryius Thomas    131.54
-73WR:   Emmanuel Sanders    125.51
-85QB:   Kirk Cousins        269.40
-Total:  1418.36
-Variance:  373.51
+|Team  1|
+|--------|-------------|------------|
+|01RB:   |David Johnson       |283.32|
+|13RB:   |Todd Gurley         |184.69|
+|25FLEX: |Isaiah Crowell      |158.82|
+|37WR:   |Allen Robinson      |144.53|
+|49TE:   |Jordan Reed         |120.55|
+|61WR:   |Demaryius Thomas    |131.54|
+|73WR:   |Emmanuel Sanders    |125.51|
+|85QB:   | Kirk Cousins       |269.40|
+|Total   | 1418.36|
+|Variance|373.51|
 
 Team  2
 02RB:   Le'Veon Bell        262.44
