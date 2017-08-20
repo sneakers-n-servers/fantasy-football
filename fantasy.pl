@@ -44,10 +44,10 @@ my $num_teams = 12;
 my %scoring = (
   'passing_yds'   => 25,
   'passing_tds'   => 4, 
-  'ints'          => -2,
+  'ints'          => -1,
   'rushing_yds'   => 10, 
   'rushing_tds'   => 6,
-  'receptions'    => 0,
+  'receptions'    => 0.5,
   'receiving_yds' => 10,
   'receiving_tds' => 6,
   'fumbles'       => -2
@@ -92,7 +92,10 @@ foreach(keys %calculated_hash){
 }
 
 #Copy the keeper hash, we modify it due to argument order pass by ref
-($_ = %keeper_hash)for(my %temp_hash, my %temp_hash2);
+#my %temp_hash = %keeper_hash; 
+#my %temp_hash2 = %keeper_hash; 
+(my %temp_hash, my %temp_hash2) = (%keeper_hash, %keeper_hash);
+#($_ = %keeper_hash)foreach(my %temp_hash, my %temp_hash2);
 
 #Dump the value list
 my @all_together = (@{$calculated_hash{'qb'}}, @{$calculated_hash{'rb'}}, @{$calculated_hash{'wr'}},  @{$calculated_hash{'te'}});

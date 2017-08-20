@@ -32,14 +32,14 @@ Heres a sample of the mock draft:
 
 |Team  1 |             |             |
 |--------|-------------|-------------|
-|01RB:   |David Johnson       |283.32|
-|13RB:   |Todd Gurley         |184.69|
-|25FLEX: |Isaiah Crowell      |158.82|
-|37WR:   |Allen Robinson      |144.53|
-|49TE:   |Jordan Reed         |120.55|
-|61WR:   |Demaryius Thomas    |131.54|
-|73WR:   |Emmanuel Sanders    |125.51|
-|85QB:   | Kirk Cousins       |269.40|
+|01RB    |David Johnson       |283.32|
+|13RB    |Todd Gurley         |184.69|
+|25FLEX  |Isaiah Crowell      |158.82|
+|37WR    |Allen Robinson      |144.53|
+|49TE    |Jordan Reed         |120.55|
+|61WR    |Demaryius Thomas    |131.54|
+|73WR    |Emmanuel Sanders    |125.51|
+|85QB    | Kirk Cousins       |269.40|
 |Total   |                    |1418.36|
 |Variance|                    |373.51|
 
