@@ -43,8 +43,8 @@ my $num_teams = 12;
 
 my %scoring = (
   'passing_yds'   => 25,
-  'passing_tds'   => 4, 
-  'ints'          => -1,
+  'passing_tds'   => 6, 
+  'ints'          => -3,
   'rushing_yds'   => 10, 
   'rushing_tds'   => 6,
   'receptions'    => 0.5,
@@ -58,8 +58,7 @@ my %positions = (
   'wr'    => 3,
   'rb'    => 2,
   'te'    => 1,
-  'flex'  => 1, 
-  'bench' => 5
+  'flex'  => 1
 );
 
 my %keeper_hash;
@@ -206,7 +205,7 @@ sub dumpf{
   my $outfile = join('/', $output_dir, $position . '.csv');
   print('dumping ' , $position . '.csv', "\n");  
   open(my $fh, '>', $outfile) || die("Unable to write $outfile"); 
-  ($printv) ? print($fh 'NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)|VALUE|VARIANCE', "\n") : print($fh 'NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)', "\n"); 
+  ($printv) ? print($fh 'NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)|VARAINCE|VALUE', "\n") : print($fh 'NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)', "\n"); 
   foreach(@arr){
     print($fh ${$_}->to_csv($printv), "\n"); 
   }  

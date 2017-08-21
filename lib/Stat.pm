@@ -14,8 +14,10 @@ sub to_str{
 }
 
 sub to_csv{ 
-  my $self = shift; 
-  join('|', $self->avg, $self->high, $self->low); 
+  my $self = shift;
+  my $high = '+' . sprintf("%.2f", $self->high - $self->avg);
+  my $low = '-' . sprintf("%.2f", $self->avg - $self->low); 
+  join('|', $self->avg, $high, $low); 
 }
 
 __PACKAGE__->meta->make_immutable();

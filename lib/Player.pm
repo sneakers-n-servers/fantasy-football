@@ -20,7 +20,7 @@ sub push_stat{
 sub to_csv{ 
   my($self, $printv) = @_;
   my $string = ($printv) ? 
-    join('|', $self->name, $self->position, $self->team, $self->fpts->to_csv, $self->value, $self->variance) :
+    join('|', $self->name, $self->position, $self->team, $self->fpts->to_csv, $self->variance, $self->value) :
     join('|', $self->name, $self->position, $self->team, $self->fpts->to_csv); 
   return($string);  
 } 
