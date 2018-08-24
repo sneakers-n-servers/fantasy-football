@@ -1,8 +1,8 @@
 # fantasy-football
-*Perl scripts to run value based drafting algorithim.
-*Compare all players QB, RB, WR, TE on an adjusted scale in order to produce an accurate draft list, based on settings in the main script
-*I rip the numbers from [fantasypros](https://www.fantasypros.com/nfl/projections/qb.php?week=draft).
-*Just added the mock draft feature, it works
+* Perl scripts to run value based drafting algorithim.
+* Compare all players QB, RB, WR, TE on an adjusted scale in order to produce an accurate draft list, based on settings in the main script
+* I rip the numbers from [fantasypros](https://www.fantasypros.com/nfl/projections/qb.php?week=draft).
+* Just added the mock draft feature, it works
 
 The cheat sheet produced looks like this:
 
