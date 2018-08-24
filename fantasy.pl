@@ -6,7 +6,7 @@ use Cwd 'abs_path';
 use LWP::UserAgent;
 use Getopt::Long;
 use File::Basename; 
-use lib './lib';
+use lib 'lib';
 use QB;
 use RBWR; 
 use TE;
@@ -91,10 +91,7 @@ foreach(keys %calculated_hash){
 }
 
 #Copy the keeper hash, we modify it due to argument order pass by ref
-#my %temp_hash = %keeper_hash; 
-#my %temp_hash2 = %keeper_hash; 
 (my %temp_hash, my %temp_hash2) = (%keeper_hash, %keeper_hash);
-#($_ = %keeper_hash)foreach(my %temp_hash, my %temp_hash2);
 
 #Dump the value list
 my @all_together = (@{$calculated_hash{'qb'}}, @{$calculated_hash{'rb'}}, @{$calculated_hash{'wr'}},  @{$calculated_hash{'te'}});
@@ -135,14 +132,21 @@ sub calc_draft{
   my %remain_players = map{$_ => $remain_list[$_]} (0..$#remain_list);
 
   my $team_no = 1;
+  my $reverse = 0;
   my($ref1, $ref2); 
   for(my $i = 0; $i < scalar(@list); $i++){ 
     ($ref1, $ref2) = $team_hash{$team_no}->draft(\%draft_players, \%remain_players, $i+1);
     %draft_players = %{$ref1};
     %remain_players = %{$ref2};
 
-    if(++$team_no == $num_teams+1){ 
-      $team_no = 1;
+    ($reverse == 0) ? $team_no++ : $team_no--; 
+    if($team_no == $num_teams+1){
+      $reverse = 1;
+      $team_no = $num_teams;
+    }
+    if($team_no == 0){
+      $reverse = 0;
+      $team_no = 1;       
     }
   } 
 

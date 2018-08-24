@@ -58,7 +58,7 @@ sub select{
   #Address the flex, set the pick
   ($position eq 'flex') && $player->position('FLEX');
   $player->pick($pick); 
-  push($self->team, $player);
+  push(@{$self->team}, $player);
 
   #Add to total, and readjust
   $self->total($self->total + $player->fpts->avg);
