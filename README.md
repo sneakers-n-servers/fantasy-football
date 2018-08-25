@@ -6,7 +6,7 @@
 
 The cheat sheet produced looks like this:
 
-PICK|NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)|VALUE|VARIANCE
+PICK|NAME|POSITION|TEAM|FPTS (AVG)|FPTS (HIGH)|FPTS (LOW)|VARIANCE|VALUE
 ---|----|--------|----|----------|-----------|----------|-----|--------
 1  |Todd Gurley|RB|LAR|311.32|+35.67|-31.28|66.95|188.47
 2  |Le'Veon Bell|RB|PIT|308.3|+35.98|-32.74|68.72|185.45
