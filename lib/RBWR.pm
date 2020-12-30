@@ -17,12 +17,25 @@ sub calculate{
   (scalar(@vals) == 8) || die "RB/WR does not have enough values"; 
   
   #Load em up and calculate
-  $self->rushing_yds($vals[1]);
-  $self->rushing_tds($vals[2]);  
-  $self->receptions($vals[3]);  
-  $self->receiving_yds($vals[4]);
-  $self->receiving_tds($vals[5]); 
-  $self->fumbles($vals[6]);
+  if($self->position eq 'WR') {
+    $self->receptions($vals[0]);
+    $self->receiving_yds($vals[1]);
+    $self->receiving_tds($vals[2]);
+    $self->rushing_yds($vals[4]);
+    $self->rushing_tds($vals[5]);
+    $self->fumbles($vals[6]);
+  }
+  elsif($self->position eq 'RB'){
+    $self->rushing_yds($vals[1]);
+    $self->rushing_tds($vals[2]);
+    $self->receptions($vals[3]);
+    $self->receiving_yds($vals[4]);
+    $self->receiving_tds($vals[5]);
+    $self->fumbles($vals[6]);
+  }
+  else {
+    die("Calculating the wrong player!");
+  }
 
   my($high, $low); 
   foreach(Stat->meta->get_all_attributes){
